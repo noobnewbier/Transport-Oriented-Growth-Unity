@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace TransportOrientedGrowthTree.Core
 {
+    //consider making everything immutable
     public class MeshData
     {
         public MeshData(Vector3[] vertices, int[] triangles, Vector3[] normals = null)
