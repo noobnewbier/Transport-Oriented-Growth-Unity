@@ -6,7 +6,13 @@ namespace TransportOrientedGrowthTree.Core
 {
     public interface IMeshDataDirector
     {
-        MeshData CreateHexPrismSides(Vector3 topCenter, float topInnerRadius, Vector3 bottomCenter, float bottomInnerRadius);
+        MeshData CreateHexPrismSides(Vector3 topCenter,
+                                     float topInnerRadius,
+                                     Quaternion topOrientation,
+                                     Vector3 bottomCenter,
+                                     float bottomInnerRadius,
+                                     Quaternion bottomOrientation);
+
         MeshData GetQuad(Vector3 topLeft, Vector3 topRight, Vector3 bottomLeft, Vector3 bottomRight);
         MeshData CreateTriangle(Vector3 a, Vector3 b, Vector3 c);
         MeshData CreateHexagon(float hexInnerRadius, Vector3 center);
@@ -21,10 +27,19 @@ namespace TransportOrientedGrowthTree.Core
             _meshDataBuilder = meshDataBuilder;
         }
 
-        public MeshData CreateHexPrismSides(Vector3 topCenter, float topInnerRadius, Vector3 bottomCenter, float bottomInnerRadius)
+        public MeshData CreateHexPrismSides(Vector3 topCenter,
+                                            float topInnerRadius,
+                                            Quaternion topOrientation,
+                                            Vector3 bottomCenter,
+                                            float bottomInnerRadius,
+                                            Quaternion bottomOrientation)
         {
-            var topHexRing = GetHexRingVertices(topInnerRadius, topCenter);
-            var bottomHexRing = GetHexRingVertices(bottomInnerRadius, bottomCenter);
+            var topHexRing = GetHexRingVertices(topInnerRadius, topCenter)
+                .Select(v => RotateVectorAroundPivot(topCenter, topOrientation, v))
+                .ToArray();
+            var bottomHexRing = GetHexRingVertices(bottomInnerRadius, bottomCenter)
+                .Select(v => RotateVectorAroundPivot(bottomCenter, bottomOrientation, v))
+                .ToArray();
 
             _meshDataBuilder.Reset();
 
@@ -32,7 +47,7 @@ namespace TransportOrientedGrowthTree.Core
             {
                 var rightIndex = i;
                 var leftIndex = (i + 1) % 6;
-                
+
                 _meshDataBuilder.Append(
                     GetQuad(
                         topHexRing[leftIndex],
@@ -45,6 +60,8 @@ namespace TransportOrientedGrowthTree.Core
 
             return _meshDataBuilder.Build();
         }
+
+        private static Vector3 RotateVectorAroundPivot(Vector3 pivot, Quaternion rotation, Vector3 v) => rotation * (v - pivot) + pivot;
 
         public MeshData CreateHexagon(float hexInnerRadius, Vector3 center)
         {
@@ -65,7 +82,7 @@ namespace TransportOrientedGrowthTree.Core
         }
 
 
-        private static IList<Vector3> GetHexRingVertices(float hexInnerRadius, Vector3 center)
+        private static IEnumerable<Vector3> GetHexRingVertices(float hexInnerRadius, Vector3 center)
         {
             var outerRadius = hexInnerRadius / 0.86602540378f;
 
@@ -83,11 +100,11 @@ namespace TransportOrientedGrowthTree.Core
         public MeshData GetQuad(Vector3 topLeft, Vector3 topRight, Vector3 bottomLeft, Vector3 bottomRight)
         {
             return new MeshData(
-                new[] {topLeft, topRight, bottomLeft, bottomRight},
+                new[] {bottomLeft, bottomRight, topLeft, topRight},
                 new[]
                 {
-                    0, 1, 2,
-                    1, 3, 2
+                    0, 2, 1,
+                    2, 3, 1
                 }
             );
         }
