@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace TransportOrientedGrowthTree.Core
+namespace TransportOrientedGrowthTree.Ui.Meshes
 {
     public interface IMeshDataDirector
     {

@@ -1,5 +1,5 @@
 ﻿using System;
-using TransportOrientedGrowthTree.Core;
+using TransportOrientedGrowthTree.Ui;
 
 namespace TransportOrientedGrowthTree.Di.Injectors
 {

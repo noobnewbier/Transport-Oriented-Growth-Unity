@@ -1,4 +1,5 @@
-﻿using TransportOrientedGrowthTree.Core;
+﻿using TransportOrientedGrowthTree.Ui;
+using TransportOrientedGrowthTree.Ui.Meshes;
 using UnityEngine;
 
 namespace TransportOrientedGrowthTree.Di.Composers

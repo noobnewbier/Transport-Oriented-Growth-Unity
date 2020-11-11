@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TransportOrientedGrowthTree.Core
+namespace TransportOrientedGrowthTree.Ui
 {
     public interface IDependenciesProvider
     {
