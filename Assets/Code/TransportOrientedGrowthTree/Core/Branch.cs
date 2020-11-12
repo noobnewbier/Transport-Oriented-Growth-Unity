@@ -1,60 +1,63 @@
 ﻿using System;
+using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace TransportOrientedGrowthTree.Core
 {
+    //todo: might need to double 
     public class Branch : IDisposable
     {
+        private readonly int _depth;
         private readonly GrowthModel _growthModel;
-
         private readonly int _id;
-        private bool _isLeaf = true;
-
-        private Branch _childA, _childB;
         private readonly Branch _parent;
 
-        private readonly float _growthRatio;
-        private readonly float _growthSpread;
-        private readonly float _splitSize;
-        private readonly int _depth;
+        private bool _isLeaf;
+        private float _crossSectionArea = 0.1f;
 
-        private readonly Vector3 _direction;
-        private float _length, _radius, _crossSectionArea = 0.1f;
+        public Vector3 ToDirection { get; }
+        public Vector3 FromDirection { get; }
+
+        [CanBeNull] public Branch ChildA { get; private set; }
+
+        [CanBeNull] public Branch ChildB { get; private set; }
+
+        public float Length { get; private set; }
+
+        public float Radius { get; private set; }
 
 
-        public Branch(float growthRatio, float growthSpread, float splitSize, GrowthModel growthModel)
+        public Branch(GrowthModel growthModel)
         {
             _growthModel = growthModel;
-            _growthRatio = growthRatio;
-            _growthSpread = growthSpread;
-            _splitSize = splitSize;
-            _direction = Vector3.up;
+            ToDirection = Vector3.up;
+            FromDirection = Vector3.up;
+            _isLeaf = true;
         }
 
-        public Branch(Branch parent, int id, Vector3 direction)
+        public Branch(Branch parent, int id, Vector3 toDirection, Vector3 fromDirection)
         {
             _growthModel = parent._growthModel;
-            _growthRatio = parent._growthRatio;
-            _growthSpread = parent._growthSpread;
-            _splitSize = parent._splitSize;
             _depth = parent._depth + 1;
             _parent = parent;
             _id = id;
-            _direction = direction;
+            ToDirection = toDirection;
+            FromDirection = fromDirection;
+            _isLeaf = true;
         }
 
-        private float SplitRequirementOnLength => _splitSize * Mathf.Exp(-_growthModel.SplitDecay * _depth);
+        private float SplitRequirementOnLength => _growthModel.MinLengthToSplit * Mathf.Exp(-_growthModel.SplitDecay * _depth);
 
         public void Dispose()
         {
-            _childA?.Dispose();
-            _childB?.Dispose();
+            ChildA?.Dispose();
+            ChildB?.Dispose();
         }
 
         public void Grow(float feed)
         {
-            _radius = Mathf.Sqrt(_crossSectionArea / Mathf.PI);
+            Radius = Mathf.Sqrt(_crossSectionArea / Mathf.PI);
 
             if (_isLeaf)
                 GrowAsLeaf(feed);
@@ -64,64 +67,69 @@ namespace TransportOrientedGrowthTree.Core
 
         private void GrowAsParent(float feed)
         {
-            var pass = GetPassRatio();
+            var passRatio = GetPassRatio();
 
-            _crossSectionArea += pass * feed / _length;
-            feed *= 1 - pass;
+            _crossSectionArea += passRatio * feed / Length;
+            feed *= 1 - passRatio;
 
             if (!HasEnoughFeedForChildren(feed)) return;
 
-            _childA.Grow(feed * _growthModel.PassRatio);
-            _childB.Grow(feed * (1 - _growthModel.PassRatio));
+            ChildA?.Grow(feed * _growthModel.NutritionRatio);
+            ChildB?.Grow(feed * (1 - _growthModel.NutritionRatio));
         }
 
-        private static bool HasEnoughFeedForChildren(float feed) => feed < 1E-5;
+        private static bool HasEnoughFeedForChildren(float feed) => feed > 1E-5;
 
         //eventually converge to 0.5 - conserving the cross-section area constraint
-        private float GetPassRatio() =>
-            (_childA._crossSectionArea + _childB._crossSectionArea) /
-            (_childA._crossSectionArea + _childB._crossSectionArea + _crossSectionArea);
+        private float GetPassRatio()
+        {
+            var childACrossSectionArea = ChildA?._crossSectionArea ?? 0f;
+            var childBCrossSectionArea = ChildB?._crossSectionArea ?? 0f;
+
+            return (childACrossSectionArea + childBCrossSectionArea) /
+                   (childACrossSectionArea + childBCrossSectionArea + _crossSectionArea);
+        }
 
         private void GrowAsLeaf(float feed)
         {
             var growthInLength = Mathf.Pow(feed, 1f / 3f);
 
-            _length += growthInLength;
+            Length += growthInLength;
             feed -= growthInLength * _crossSectionArea;
 
-            _crossSectionArea += feed / _length; // todo: this look suspicious, can be replaced by our "newer formula"
+            _crossSectionArea += feed / Length; // todo: this look suspicious, can be replaced by our "newer formula"
 
             if (LongEnoughToSplit())
                 Split();
         }
 
-        private bool LongEnoughToSplit() => _length > SplitRequirementOnLength;
+        private bool LongEnoughToSplit() => Length > SplitRequirementOnLength;
 
         private void Split()
         {
             _isLeaf = false;
 
             var (aDirection, bDirection) = GetDirectionsForChildren();
-            _childA = new Branch(this, 2 * _id, aDirection);
-            _childB = new Branch(this, 2 * _id + 1, bDirection);
+            ChildA = new Branch(this, 2 * _id, aDirection, ToDirection);
+            ChildB = new Branch(this, 2 * _id + 1, bDirection, ToDirection);
         }
 
         private (Vector3 aDirection, Vector3 bDirection) GetDirectionsForChildren()
         {
-            var directionWithHighestLeafDensity = GetDirectionWithHighestLeafDensity(_growthModel.LocalDepth);
-            var normalToSelfDirectionAndHighestLeafDensityPlane = Vector3.Cross(_direction, directionWithHighestLeafDensity);
+            var directionWithHighestLeafDensity = GetDirectionWithHighestLeafDensity(_growthModel.ChildDirectionAccuracyInDepth);
+            var normalToSelfDirectionAndHighestLeafDensityPlane = Vector3.Cross(ToDirection, directionWithHighestLeafDensity);
             var randomDirectionFlip = Random.value > 0.5 ? 1f : -1f;
 
             var aDirection = Vector3.LerpUnclamped(
-                    randomDirectionFlip * _growthSpread * normalToSelfDirectionAndHighestLeafDensityPlane,
-                    _direction,
-                    _growthRatio
+                    randomDirectionFlip * _growthModel.BranchSpread * normalToSelfDirectionAndHighestLeafDensityPlane,
+                    ToDirection,
+                    _growthModel.ChildDirectionRatio
                 )
                 .normalized;
             var bDirection = Vector3.LerpUnclamped(
-                    randomDirectionFlip * _growthSpread * -normalToSelfDirectionAndHighestLeafDensityPlane,
-                    _direction,
-                    1 - _growthRatio
+                    randomDirectionFlip * _growthModel.BranchSpread * -normalToSelfDirectionAndHighestLeafDensityPlane,
+                    ToDirection,
+                    1 - _growthModel.ChildDirectionRatio
                 )
                 .normalized;
 
@@ -139,20 +147,28 @@ namespace TransportOrientedGrowthTree.Core
             var relativePositionToStartNode = Vector3.zero;
             while (ancestorNode._depth > 0 && searchDepth-- >= 0)
             {
-                relativePositionToStartNode += ancestorNode._length * ancestorNode._direction;
+                relativePositionToStartNode += ancestorNode.Length * ancestorNode.ToDirection;
                 ancestorNode = ancestorNode._parent;
             }
 
             //Average relative to ancestor, shifted by rel ( + Noise )
+            //todo: noise should be added after this function, the function should return the exact value, maybe same as directedness
             return _growthModel.Directedness * (GetAverageLeafPositionOfChildren(ancestorNode) - relativePositionToStartNode).normalized +
                    (1.0f - _growthModel.Directedness) * noiseVector;
         }
 
-        private Vector3 GetAverageLeafPositionOfChildren(Branch b)
+        private Vector3 GetAverageLeafPositionOfChildren([CanBeNull] Branch branch)
         {
-            if (b._isLeaf) return b._length * b._direction;
-            return b._length * b._direction + _radius * GetAverageLeafPositionOfChildren(b._childA) +
-                   (1.0f - _radius) * GetAverageLeafPositionOfChildren(b._childB);
+            if (branch == null)
+            {
+                return Vector3.zero;
+            }
+
+            var selfAverageLeafPosition = branch.Length * branch.ToDirection;
+            var childAAverageLeafPosition = _growthModel.ChildDirectionRatio * GetAverageLeafPositionOfChildren(branch.ChildA);
+            var childBAverageLeafPosition = (1.0f - _growthModel.ChildDirectionRatio) * GetAverageLeafPositionOfChildren(branch.ChildB);
+
+            return selfAverageLeafPosition + childAAverageLeafPosition + childBAverageLeafPosition;
         }
 
         //todo: looks suspicious

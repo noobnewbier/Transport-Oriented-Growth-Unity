@@ -22,7 +22,7 @@ namespace TransportOrientedGrowthTree.Di.Injectors
             {
                 var paramType = parameterInfos[i].ParameterType;
 
-                if (_dependenciesProvider.TryGet(paramType, out var param))
+                if (_dependenciesProvider.TryGet<object>(paramType, out var param))
                     parameters[i] = param;
                 else
                     throw new InvalidOperationException($"{paramType.FullName} is not included in the dependencies");

@@ -17,5 +17,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
         public Vector3[] Vertices { get; }
         [CanBeNull] public Vector3[] Normals { get; }
         public bool HasCustomNormal => Normals != null;
+
+        public static MeshData Empty => new MeshData(new Vector3 [0], new int [0]);
     }
 }

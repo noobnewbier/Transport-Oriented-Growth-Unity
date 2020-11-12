@@ -1,11 +1,25 @@
 ﻿namespace TransportOrientedGrowthTree.Core
 {
-    public struct GrowthModel
+    public class GrowthModel
     {
-        public float GrowthRate => 1.0f;
-        public float PassRatio => 0.3f;
-        public float SplitDecay => 1E-2f;
-        public float Directedness => 0.5f;
-        public int LocalDepth => 2;
+        public GrowthModel(float nutritionRatio, float splitDecay, float directedness, int childDirectionAccuracyInDepth, float childDirectionRatio, float branchSpread, float minLengthToSplit)
+        {
+            NutritionRatio = nutritionRatio;
+            SplitDecay = splitDecay;
+            Directedness = directedness;
+            ChildDirectionAccuracyInDepth = childDirectionAccuracyInDepth;
+            ChildDirectionRatio = childDirectionRatio;
+            BranchSpread = branchSpread;
+            MinLengthToSplit = minLengthToSplit;
+        }
+
+        //todo: might have confused between nutrition ratio and child direction ratio
+        public float NutritionRatio { get; }
+        public float SplitDecay { get; }
+        public float Directedness { get; }
+        public int ChildDirectionAccuracyInDepth { get; }
+        public float ChildDirectionRatio { get; }
+        public float BranchSpread { get; }
+        public float MinLengthToSplit { get; }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
+using TransportOrientedGrowthTree.Core;
 using UnityEngine;
+using Tree = TransportOrientedGrowthTree.Core.Tree;
 
 namespace TransportOrientedGrowthTree.Ui.Meshes
 {
-    public interface IMeshDataDirector
+    public interface IPrimitivesMeshDataDirector
     {
         MeshData CreateHexPrismSides(Vector3 topCenter,
                                      float topInnerRadius,
@@ -18,11 +21,11 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
         MeshData CreateHexagon(float hexInnerRadius, Vector3 center);
     }
 
-    public class MeshDataDirector : IMeshDataDirector
+    public class PrimitivesMeshDataDirector : IPrimitivesMeshDataDirector
     {
         private readonly IMeshDataBuilder _meshDataBuilder;
 
-        public MeshDataDirector(IMeshDataBuilder meshDataBuilder)
+        public PrimitivesMeshDataDirector(IMeshDataBuilder meshDataBuilder)
         {
             _meshDataBuilder = meshDataBuilder;
         }
@@ -80,8 +83,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
                 }
             );
         }
-
-
+        
         private static IEnumerable<Vector3> GetHexRingVertices(float hexInnerRadius, Vector3 center)
         {
             var outerRadius = hexInnerRadius / 0.86602540378f;
