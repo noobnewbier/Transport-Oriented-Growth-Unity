@@ -14,8 +14,8 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
 
     public class MeshDataBuilder : IMeshDataBuilder
     {
-        private readonly List<int> _triangles;
         private readonly List<Vector3> _normals;
+        private readonly List<int> _triangles;
         private readonly List<Vector3> _vertices;
         private bool _hasCustomNormal;
 
@@ -56,10 +56,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             return this;
         }
 
-        public MeshData Build()
-        {
-            return new MeshData(_vertices.ToArray(), _triangles.ToArray(), _hasCustomNormal ? _normals.ToArray() : null);
-        }
+        public MeshData Build() => new MeshData(_vertices.ToArray(), _triangles.ToArray(), _hasCustomNormal ? _normals.ToArray() : null);
 
         public void Reset()
         {

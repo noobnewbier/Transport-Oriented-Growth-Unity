@@ -10,11 +10,11 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
         public void DrawMesh(MeshData meshData)
         {
             LogMeshData(meshData);
-            
+
             var mesh = meshFilter.mesh;
-            
+
             mesh.Clear();
-            
+
             mesh.vertices = meshData.Vertices;
             mesh.triangles = meshData.Triangles;
             if (meshData.HasCustomNormal)

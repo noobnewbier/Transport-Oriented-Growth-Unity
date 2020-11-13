@@ -12,9 +12,29 @@ namespace TransportOrientedGrowthTree.Core
         private readonly GrowthModel _growthModel;
         private readonly int _id;
         private readonly Branch _parent;
-
-        private bool _isLeaf;
         private float _crossSectionArea = 0.1f;
+
+
+        public Branch(GrowthModel growthModel)
+        {
+            _growthModel = growthModel;
+            ToDirection = Vector3.up;
+            FromDirection = Vector3.up;
+            IsLeaf = true;
+        }
+
+        public Branch(Branch parent, int id, Vector3 toDirection, Vector3 fromDirection)
+        {
+            _growthModel = parent._growthModel;
+            _depth = parent._depth + 1;
+            _parent = parent;
+            _id = id;
+            ToDirection = toDirection;
+            FromDirection = fromDirection;
+            IsLeaf = true;
+        }
+
+        public bool IsLeaf { get; private set; }
 
         public Vector3 ToDirection { get; }
         public Vector3 FromDirection { get; }
@@ -26,26 +46,6 @@ namespace TransportOrientedGrowthTree.Core
         public float Length { get; private set; }
 
         public float Radius { get; private set; }
-
-
-        public Branch(GrowthModel growthModel)
-        {
-            _growthModel = growthModel;
-            ToDirection = Vector3.up;
-            FromDirection = Vector3.up;
-            _isLeaf = true;
-        }
-
-        public Branch(Branch parent, int id, Vector3 toDirection, Vector3 fromDirection)
-        {
-            _growthModel = parent._growthModel;
-            _depth = parent._depth + 1;
-            _parent = parent;
-            _id = id;
-            ToDirection = toDirection;
-            FromDirection = fromDirection;
-            _isLeaf = true;
-        }
 
         private float SplitRequirementOnLength => _growthModel.MinLengthToSplit * Mathf.Exp(-_growthModel.SplitDecay * _depth);
 
@@ -59,7 +59,7 @@ namespace TransportOrientedGrowthTree.Core
         {
             Radius = Mathf.Sqrt(_crossSectionArea / Mathf.PI);
 
-            if (_isLeaf)
+            if (IsLeaf)
                 GrowAsLeaf(feed);
             else
                 GrowAsParent(feed);
@@ -107,7 +107,7 @@ namespace TransportOrientedGrowthTree.Core
 
         private void Split()
         {
-            _isLeaf = false;
+            IsLeaf = false;
 
             var (aDirection, bDirection) = GetDirectionsForChildren();
             ChildA = new Branch(this, 2 * _id, aDirection, ToDirection);
@@ -159,10 +159,7 @@ namespace TransportOrientedGrowthTree.Core
 
         private Vector3 GetAverageLeafPositionOfChildren([CanBeNull] Branch branch)
         {
-            if (branch == null)
-            {
-                return Vector3.zero;
-            }
+            if (branch == null) return Vector3.zero;
 
             var selfAverageLeafPosition = branch.Length * branch.ToDirection;
             var childAAverageLeafPosition = _growthModel.ChildDirectionRatio * GetAverageLeafPositionOfChildren(branch.ChildA);

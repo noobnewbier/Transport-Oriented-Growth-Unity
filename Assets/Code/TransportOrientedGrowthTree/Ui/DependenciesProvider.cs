@@ -6,7 +6,7 @@ namespace TransportOrientedGrowthTree.Ui
     public interface IDependenciesProvider
     {
         bool TryGet<T>(Type type, out T t);
-        void AddTSingleton<T>(T t) where T: class;
+        void AddTSingleton<T>(T t) where T : class;
         void AddTFactory<T>(Func<T> tFactory) where T : class;
         T GetFromSingleton<T>(Type type);
         T GetFromFactories<T>(Type type);
@@ -14,8 +14,8 @@ namespace TransportOrientedGrowthTree.Ui
 
     public class DependenciesProvider : IDependenciesProvider
     {
-        private readonly IDictionary<Type, object> _singletons;
         private readonly IDictionary<Type, Func<object>> _factories;
+        private readonly IDictionary<Type, object> _singletons;
 
         public DependenciesProvider()
         {
@@ -32,6 +32,25 @@ namespace TransportOrientedGrowthTree.Ui
             return false;
         }
 
+        public T GetFromSingleton<T>(Type type) => (T) _singletons[type];
+
+        public T GetFromFactories<T>(Type type) => (T) _factories[type].Invoke();
+
+        public void AddTSingleton<T>(T t) where T : class
+        {
+            if (_singletons.ContainsKey(typeof(T))) throw new ArgumentException($"{typeof(T).FullName} already has its dependencies fulfilled");
+
+            _singletons[typeof(T)] = t;
+        }
+
+        //todo: consider use IFactory(what we have in Noneb)
+        public void AddTFactory<T>(Func<T> tFactory) where T : class
+        {
+            if (_factories.ContainsKey(typeof(T))) throw new ArgumentException($"{typeof(T).FullName} already has its dependencies fulfilled");
+
+            _factories[typeof(T)] = tFactory;
+        }
+
         private bool TryGetFromSingleton<T>(Type type, out T t)
         {
             if (_singletons.ContainsKey(type))
@@ -44,8 +63,6 @@ namespace TransportOrientedGrowthTree.Ui
             return false;
         }
 
-        public T GetFromSingleton<T>(Type type) => (T) _singletons[type];
-
         private bool TryGetFromFactories<T>(Type type, out T t)
         {
             if (_factories.ContainsKey(type))
@@ -56,29 +73,6 @@ namespace TransportOrientedGrowthTree.Ui
 
             t = default;
             return false;
-        }
-
-        public T GetFromFactories<T>(Type type) => (T) _factories[type].Invoke();
-
-        public void AddTSingleton<T>(T t) where T : class
-        {
-            if (_singletons.ContainsKey(typeof(T)))
-            {
-                throw new ArgumentException($"{typeof(T).FullName} already has its dependencies fulfilled");
-            }
-
-            _singletons[typeof(T)] = t;
-        }
-
-        //todo: consider use IFactory(what we have in Noneb)
-        public void AddTFactory<T>(Func<T> tFactory) where T : class
-        {
-            if (_factories.ContainsKey(typeof(T)))
-            {
-                throw new ArgumentException($"{typeof(T).FullName} already has its dependencies fulfilled");
-            }
-
-            _factories[typeof(T)] = tFactory;
         }
     }
 }

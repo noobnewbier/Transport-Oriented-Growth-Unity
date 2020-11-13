@@ -2,7 +2,13 @@
 {
     public class GrowthModel
     {
-        public GrowthModel(float nutritionRatio, float splitDecay, float directedness, int childDirectionAccuracyInDepth, float childDirectionRatio, float branchSpread, float minLengthToSplit)
+        public GrowthModel(float nutritionRatio,
+                           float splitDecay,
+                           float directedness,
+                           int childDirectionAccuracyInDepth,
+                           float childDirectionRatio,
+                           float branchSpread,
+                           float minLengthToSplit)
         {
             NutritionRatio = nutritionRatio;
             SplitDecay = splitDecay;

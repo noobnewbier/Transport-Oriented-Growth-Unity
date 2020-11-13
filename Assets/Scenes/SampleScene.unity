@@ -130,6 +130,8 @@ GameObject:
   m_Component:
   - component: {fileID: 542037918}
   - component: {fileID: 542037917}
+  - component: {fileID: 542037919}
+  - component: {fileID: 542037920}
   m_Layer: 0
   m_Name: Tree
   m_TagString: Untagged
@@ -149,10 +151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07706cfc60414fa682ec502335734015, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  growthModelScriptable: {fileID: 11400000, guid: 8fbc25bcd470cce48b978176f1604f08,
-    type: 2}
   meshDrawer: {fileID: 1056033824}
-  growthRate: 1
+  treeMonoBehaviour: {fileID: 542037919}
 --- !u!4 &542037918
 Transform:
   m_ObjectHideFlags: 0
@@ -163,10 +163,41 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1056033828}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &542037919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542037916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0303d687ab9408abf77223e8c24fab8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  growthModelScriptable: {fileID: 11400000, guid: 8fbc25bcd470cce48b978176f1604f08,
+    type: 2}
+  growthRate: 1
+--- !u!114 &542037920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542037916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5031c41f6ee4f04a3c79046b627068b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gizmosColor: {r: 0.16055535, g: 0.7470714, b: 0.8301887, a: 0}
+  gizmosSize: 0.2
+  treeMonoBehaviour: {fileID: 542037919}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,14 +264,14 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1086324736
+  m_RenderingLayerMask: 9
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 1.5e-44, y: 0, z: 2, w: 0}
+  m_BoundingSphereOverride: {x: 1e-45, y: 0, z: 1.53e-43, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -308,7 +339,7 @@ PrefabInstance:
     - target: {fileID: 6247377459771358584, guid: 317a759297f6ad74e8a76fe0d516217b,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6247377459771358584, guid: 317a759297f6ad74e8a76fe0d516217b,
         type: 3}
@@ -494,12 +525,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1056033823}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Father: {fileID: 542037918}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1213164002
 GameObject:
@@ -560,11 +591,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 548c08adb87140ceb8440914d907fac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshDrawer: {fileID: 1056033824}
-  topHexMarker: {fileID: 2084543683}
-  bottomHexMarker: {fileID: 1213164003}
-  topHexInnerRadius: 0.2
   bottomHexInnerRadius: 1
+  bottomHexMarker: {fileID: 1213164003}
+  meshDrawer: {fileID: 1056033824}
+  topHexInnerRadius: 0.2
+  topHexMarker: {fileID: 2084543683}
 --- !u!4 &1601569006
 Transform:
   m_ObjectHideFlags: 0
@@ -579,7 +610,7 @@ Transform:
   - {fileID: 2084543683}
   - {fileID: 1213164003}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2084543682
 GameObject:
