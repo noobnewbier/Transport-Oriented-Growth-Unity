@@ -31,7 +31,7 @@ namespace TransportOrientedGrowthTree.Di.Composers
             var meshDataBuilder = dependenciesProvider.GetFromFactories<IMeshDataBuilder>(typeof(IMeshDataBuilder));
             var treeMeshDataDirector = new TreeMeshDataDirector(
                 meshDataBuilder,
-                dependenciesProvider.GetFromSingleton<IPrimitivesMeshDataDirector>(typeof(IPrimitivesMeshDataDirector))
+                dependenciesProvider.GetFromSingleton<IHexTubeMeshDataDirector>(typeof(IHexTubeMeshDataDirector))
             );
 
             dependenciesProvider.AddTSingleton<ITreeMeshDataDirector>(treeMeshDataDirector);
@@ -40,7 +40,7 @@ namespace TransportOrientedGrowthTree.Di.Composers
         private static void AddPrimitivesMeshDataDirector(IDependenciesProvider dependenciesProvider)
         {
             var meshBuilder = dependenciesProvider.GetFromFactories<IMeshDataBuilder>(typeof(IMeshDataBuilder));
-            dependenciesProvider.AddTSingleton<IPrimitivesMeshDataDirector>(new PrimitivesMeshDataDirector(meshBuilder));
+            dependenciesProvider.AddTSingleton<IHexTubeMeshDataDirector>(new HexTubeMeshDataDirector(meshBuilder));
         }
 
         private static void ComposeFactories(IDependenciesProvider dependenciesProvider)

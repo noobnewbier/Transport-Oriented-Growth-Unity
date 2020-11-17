@@ -7,7 +7,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
 {
     public interface IMeshDataBuilder
     {
-        MeshDataBuilder Append(MeshData meshData);
+        void Append(MeshData meshData);
         MeshData Build();
         void Reset();
     }
@@ -19,14 +19,6 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
         private readonly List<Vector3> _vertices;
         private bool _hasCustomNormal;
 
-        public MeshDataBuilder(MeshData data)
-        {
-            _vertices = data.Vertices.ToList();
-            _triangles = data.Triangles.ToList();
-            _normals = data.Normals?.ToList() ?? new List<Vector3>(_vertices.Count);
-            _hasCustomNormal = data.HasCustomNormal;
-        }
-
         public MeshDataBuilder()
         {
             _vertices = new List<Vector3>();
@@ -35,7 +27,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             _hasCustomNormal = false;
         }
 
-        public MeshDataBuilder Append(MeshData meshData)
+        public void Append(MeshData meshData)
         {
             var originalVerticesLength = _vertices.Count;
             _vertices.AddRange(meshData.Vertices);
@@ -52,8 +44,6 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             {
                 _normals.AddRange(Enumerable.Repeat(Vector3.zero, meshData.Vertices.Length));
             }
-
-            return this;
         }
 
         public MeshData Build() => new MeshData(_vertices.ToArray(), _triangles.ToArray(), _hasCustomNormal ? _normals.ToArray() : null);

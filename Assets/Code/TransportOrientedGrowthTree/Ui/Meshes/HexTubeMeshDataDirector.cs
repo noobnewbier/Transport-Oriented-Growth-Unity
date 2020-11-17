@@ -4,19 +4,17 @@ using UnityEngine;
 
 namespace TransportOrientedGrowthTree.Ui.Meshes
 {
-    public interface IPrimitivesMeshDataDirector
+    public interface IHexTubeMeshDataDirector
     {
         MeshData CreateHexTube(MeshConnectorData top, MeshConnectorData bottom);
-        MeshData GetQuad(Vector3 topLeft, Vector3 topRight, Vector3 bottomLeft, Vector3 bottomRight);
-        MeshData CreateTriangle(Vector3 a, Vector3 b, Vector3 c);
-        MeshData CreateHexagon(float hexInnerRadius, Vector3 center);
     }
 
-    public class PrimitivesMeshDataDirector : IPrimitivesMeshDataDirector
+    public class HexTubeMeshDataDirector : IHexTubeMeshDataDirector
     {
         private readonly IMeshDataBuilder _meshDataBuilder;
+        private const float ThresholdToDrawTube = 0.0001f;
 
-        public PrimitivesMeshDataDirector(IMeshDataBuilder meshDataBuilder)
+        public HexTubeMeshDataDirector(IMeshDataBuilder meshDataBuilder)
         {
             _meshDataBuilder = meshDataBuilder;
         }
@@ -25,7 +23,9 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
         {
             _meshDataBuilder.Reset();
 
-            return AppendHexTube(top, bottom);
+            AppendHexTube(top, bottom);
+            
+            return _meshDataBuilder.Build();
         }
 
         public MeshData CreateHexagon(float hexInnerRadius, Vector3 center)
@@ -46,7 +46,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             );
         }
 
-        public MeshData GetQuad(Vector3 topLeft, Vector3 topRight, Vector3 bottomLeft, Vector3 bottomRight)
+        private MeshData CreateQuad(Vector3 topLeft, Vector3 topRight, Vector3 bottomLeft, Vector3 bottomRight)
         {
             return new MeshData(
                 new[] {bottomLeft, bottomRight, topLeft, topRight},
@@ -66,7 +66,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             );
         }
 
-        private MeshData AppendHexTube(MeshConnectorData top, MeshConnectorData bottom)
+        private void AppendHexTube(MeshConnectorData top, MeshConnectorData bottom)
         {
             var topCenter = top.Center;
             var topInnerRadius = top.InnerRadius;
@@ -74,7 +74,12 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             var bottomCenter = bottom.Center;
             var bottomInnerRadius = bottom.InnerRadius;
             var bottomOrientation = bottom.Orientation;
-
+            
+            if (Vector3.Distance(topCenter, bottomCenter) < ThresholdToDrawTube)
+            {
+                return;
+            }
+            
             var topHexRing = GetHexRingVertices(topInnerRadius, topCenter)
                 .Select(v => RotateVectorAroundPivot(topCenter, topOrientation, v))
                 .ToArray();
@@ -88,7 +93,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
                 var leftIndex = (i + 1) % 6;
 
                 _meshDataBuilder.Append(
-                    GetQuad(
+                    CreateQuad(
                         topHexRing[leftIndex],
                         topHexRing[rightIndex],
                         bottomHexRing[leftIndex],
@@ -96,8 +101,6 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
                     )
                 );
             }
-
-            return _meshDataBuilder.Build();
         }
 
         private static Vector3 RotateVectorAroundPivot(Vector3 pivot, Quaternion rotation, Vector3 v) => rotation * (v - pivot) + pivot;

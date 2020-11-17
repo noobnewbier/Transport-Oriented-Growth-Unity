@@ -13,12 +13,12 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
     public class TreeMeshDataDirector : ITreeMeshDataDirector
     {
         private readonly IMeshDataBuilder _meshDataBuilder;
-        private readonly IPrimitivesMeshDataDirector _primitivesMeshDataDirector;
+        private readonly IHexTubeMeshDataDirector _hexTubeMeshDataDirector;
 
-        public TreeMeshDataDirector(IMeshDataBuilder meshDataBuilder, IPrimitivesMeshDataDirector primitivesMeshDataDirector)
+        public TreeMeshDataDirector(IMeshDataBuilder meshDataBuilder, IHexTubeMeshDataDirector hexTubeMeshDataDirector)
         {
             _meshDataBuilder = meshDataBuilder;
-            _primitivesMeshDataDirector = primitivesMeshDataDirector;
+            _hexTubeMeshDataDirector = hexTubeMeshDataDirector;
         }
 
         public MeshData CreateTreeMeshFromData(Tree tree)
@@ -52,7 +52,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
 
         private void AppendLeafBranchMesh(Branch branch, Vector3 branchStartingPoint, Vector3 branchEndingPoint)
         {
-            var mainBranchMesh = _primitivesMeshDataDirector.CreateHexTube(
+            var mainBranchMesh = _hexTubeMeshDataDirector.CreateHexTube(
                 new MeshConnectorData(
                     branchEndingPoint,
                     branch.Radius,
@@ -71,7 +71,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
         {
             if (branch.ChildA != null)
             {
-                var toChildAMesh = _primitivesMeshDataDirector.CreateHexTube(
+                var toChildAMesh = _hexTubeMeshDataDirector.CreateHexTube(
                     new MeshConnectorData(
                         branchEndingPoint,
                         branch.ChildA.Radius,
@@ -89,7 +89,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             // ReSharper disable once InvertIf : Improve readability
             if (branch.ChildB != null)
             {
-                var toChildBMesh = _primitivesMeshDataDirector.CreateHexTube(
+                var toChildBMesh = _hexTubeMeshDataDirector.CreateHexTube(
                     new MeshConnectorData(
                         branchEndingPoint,
                         branch.ChildB.Radius,
