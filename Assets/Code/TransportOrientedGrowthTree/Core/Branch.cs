@@ -14,26 +14,6 @@ namespace TransportOrientedGrowthTree.Core
         private readonly Branch _parent;
         private float _crossSectionArea = 0.1f;
 
-
-        public Branch(GrowthModel growthModel)
-        {
-            _growthModel = growthModel;
-            ToDirection = Vector3.up;
-            FromDirection = Vector3.up;
-            IsLeaf = true;
-        }
-
-        public Branch(Branch parent, int id, Vector3 toDirection, Vector3 fromDirection)
-        {
-            _growthModel = parent._growthModel;
-            _depth = parent._depth + 1;
-            _parent = parent;
-            _id = id;
-            ToDirection = toDirection;
-            FromDirection = fromDirection;
-            IsLeaf = true;
-        }
-
         public bool IsLeaf { get; private set; }
 
         public Vector3 ToDirection { get; }
@@ -48,6 +28,29 @@ namespace TransportOrientedGrowthTree.Core
         public float Radius { get; private set; }
 
         private float SplitRequirementOnLength => _growthModel.MinLengthToSplit * Mathf.Exp(-_growthModel.SplitDecay * _depth);
+
+
+        public Branch(GrowthModel growthModel)
+        {
+            _growthModel = growthModel;
+            ToDirection = Vector3.up;
+            FromDirection = Vector3.up;
+            IsLeaf = true;
+        }
+
+        public Branch(Branch parent,
+                      int id,
+                      Vector3 toDirection,
+                      Vector3 fromDirection)
+        {
+            _growthModel = parent._growthModel;
+            _depth = parent._depth + 1;
+            _parent = parent;
+            _id = id;
+            ToDirection = toDirection;
+            FromDirection = fromDirection;
+            IsLeaf = true;
+        }
 
         public void Dispose()
         {
@@ -86,8 +89,7 @@ namespace TransportOrientedGrowthTree.Core
             var childACrossSectionArea = ChildA?._crossSectionArea ?? 0f;
             var childBCrossSectionArea = ChildB?._crossSectionArea ?? 0f;
 
-            return (childACrossSectionArea + childBCrossSectionArea) /
-                   (childACrossSectionArea + childBCrossSectionArea + _crossSectionArea);
+            return (childACrossSectionArea + childBCrossSectionArea) / (childACrossSectionArea + childBCrossSectionArea + _crossSectionArea);
         }
 
         private void GrowAsLeaf(float feed)
@@ -110,8 +112,18 @@ namespace TransportOrientedGrowthTree.Core
             IsLeaf = false;
 
             var (aDirection, bDirection) = GetDirectionsForChildren();
-            ChildA = new Branch(this, 2 * _id, aDirection, ToDirection);
-            ChildB = new Branch(this, 2 * _id + 1, bDirection, ToDirection);
+            ChildA = new Branch(
+                this,
+                2 * _id,
+                aDirection,
+                ToDirection
+            );
+            ChildB = new Branch(
+                this,
+                2 * _id + 1,
+                bDirection,
+                ToDirection
+            );
         }
 
         private (Vector3 aDirection, Vector3 bDirection) GetDirectionsForChildren()

@@ -2,14 +2,18 @@
 using TransportOrientedGrowthTree.Di;
 using TransportOrientedGrowthTree.Ui.Meshes;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TransportOrientedGrowthTree.Ui
 {
     public class TreeMeshDrawer : MonoBehaviour, IInjectable
     {
-        private ITreeMeshDataDirector _treeMeshDataDirector;
         [SerializeField] private MeshDrawer meshDrawer;
-        [SerializeField] private TreeMonoBehaviour treeMonoBehaviour;
+
+        [FormerlySerializedAs("treeMonoBehaviour")] [SerializeField]
+        private TogTreeMonoBehaviour togTreeMonoBehaviour;
+
+        private ITreeMeshDataDirector _treeMeshDataDirector;
 
         [Inject]
         public void Inject(ITreeMeshDataDirector treeMeshDataDirector)
@@ -19,12 +23,12 @@ namespace TransportOrientedGrowthTree.Ui
 
         public void GrowTree()
         {
-            treeMonoBehaviour.Grow();
+            togTreeMonoBehaviour.Grow();
         }
 
         public void Draw()
         {
-            meshDrawer.DrawMesh(_treeMeshDataDirector.CreateTreeMeshFromData(treeMonoBehaviour.Tree));
+            meshDrawer.DrawMesh(_treeMeshDataDirector.CreateTreeMeshFromData(togTreeMonoBehaviour.TogTree));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using TransportOrientedGrowthTree.Ui;
+﻿using System;
+using TransportOrientedGrowthTree.Ui;
 using TransportOrientedGrowthTree.Ui.Meshes;
 using UnityEngine;
 
@@ -6,18 +7,22 @@ namespace TransportOrientedGrowthTree.Di.Composers
 {
     public class Composer : MonoBehaviour
     {
-        private IDependenciesProvider _cache;
+        private readonly Lazy<IDependenciesProvider> _cache = new Lazy<IDependenciesProvider>(() => new DependenciesProvider());
 
-        public IDependenciesProvider DependenciesProvider => _cache ?? (_cache = ComposeDependencies());
-
-        private static IDependenciesProvider ComposeDependencies()
+        public IDependenciesProvider DependenciesProvider
         {
-            var toReturn = new DependenciesProvider();
+            get
+            {
+                if (!_cache.IsValueCreated) ComposeDependencies();
 
-            ComposeFactories(toReturn);
-            ComposeSingletons(toReturn);
+                return _cache.Value;
+            }
+        }
 
-            return toReturn;
+        private void ComposeDependencies()
+        {
+            ComposeFactories(_cache.Value);
+            ComposeSingletons(_cache.Value);
         }
 
         private static void ComposeSingletons(IDependenciesProvider dependenciesProvider)

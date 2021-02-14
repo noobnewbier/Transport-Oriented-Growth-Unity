@@ -11,8 +11,8 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
 
     public class HexTubeMeshDataDirector : IHexTubeMeshDataDirector
     {
-        private readonly IMeshDataBuilder _meshDataBuilder;
         private const float ThresholdToDrawTube = 0.0001f;
+        private readonly IMeshDataBuilder _meshDataBuilder;
 
         public HexTubeMeshDataDirector(IMeshDataBuilder meshDataBuilder)
         {
@@ -24,7 +24,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             _meshDataBuilder.Reset();
 
             AppendHexTube(top, bottom);
-            
+
             return _meshDataBuilder.Build();
         }
 
@@ -46,7 +46,10 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             );
         }
 
-        private MeshData CreateQuad(Vector3 topLeft, Vector3 topRight, Vector3 bottomLeft, Vector3 bottomRight)
+        private MeshData CreateQuad(Vector3 topLeft,
+                                    Vector3 topRight,
+                                    Vector3 bottomLeft,
+                                    Vector3 bottomRight)
         {
             return new MeshData(
                 new[] {bottomLeft, bottomRight, topLeft, topRight},
@@ -60,10 +63,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
 
         public MeshData CreateTriangle(Vector3 a, Vector3 b, Vector3 c)
         {
-            return new MeshData(
-                new[] {a, b, c},
-                new[] {0, 1, 2}
-            );
+            return new MeshData(new[] {a, b, c}, new[] {0, 1, 2});
         }
 
         private void AppendHexTube(MeshConnectorData top, MeshConnectorData bottom)
@@ -74,12 +74,9 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             var bottomCenter = bottom.Center;
             var bottomInnerRadius = bottom.InnerRadius;
             var bottomOrientation = bottom.Orientation;
-            
-            if (Vector3.Distance(topCenter, bottomCenter) < ThresholdToDrawTube)
-            {
-                return;
-            }
-            
+
+            if (Vector3.Distance(topCenter, bottomCenter) < ThresholdToDrawTube) return;
+
             var topHexRing = GetHexRingVertices(topInnerRadius, topCenter)
                 .Select(v => RotateVectorAroundPivot(topCenter, topOrientation, v))
                 .ToArray();

@@ -1,19 +1,18 @@
 ﻿using JetBrains.Annotations;
 using TransportOrientedGrowthTree.Core;
 using UnityEngine;
-using Tree = TransportOrientedGrowthTree.Core.Tree;
 
 namespace TransportOrientedGrowthTree.Ui.Meshes
 {
     public interface ITreeMeshDataDirector
     {
-        MeshData CreateTreeMeshFromData(Tree tree);
+        MeshData CreateTreeMeshFromData(TogTree togTree);
     }
 
     public class TreeMeshDataDirector : ITreeMeshDataDirector
     {
-        private readonly IMeshDataBuilder _meshDataBuilder;
         private readonly IHexTubeMeshDataDirector _hexTubeMeshDataDirector;
+        private readonly IMeshDataBuilder _meshDataBuilder;
 
         public TreeMeshDataDirector(IMeshDataBuilder meshDataBuilder, IHexTubeMeshDataDirector hexTubeMeshDataDirector)
         {
@@ -21,11 +20,11 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             _hexTubeMeshDataDirector = hexTubeMeshDataDirector;
         }
 
-        public MeshData CreateTreeMeshFromData(Tree tree)
+        public MeshData CreateTreeMeshFromData(TogTree togTree)
         {
             _meshDataBuilder.Reset();
 
-            AppendMeshFromBranch(tree.Root, Vector3.zero);
+            AppendMeshFromBranch(togTree.Root, Vector3.zero);
 
             return _meshDataBuilder.Build();
         }
@@ -58,11 +57,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
                     branch.Radius,
                     Quaternion.Euler(branch.ToDirection) //todo:  might not actually be euler :)
                 ),
-                new MeshConnectorData(
-                    branchStartingPoint,
-                    branch.Radius,
-                    Quaternion.Euler(branch.FromDirection)
-                )
+                new MeshConnectorData(branchStartingPoint, branch.Radius, Quaternion.Euler(branch.FromDirection))
             );
             _meshDataBuilder.Append(mainBranchMesh);
         }
@@ -77,11 +72,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
                         branch.ChildA.Radius,
                         Quaternion.Euler(branch.ChildA.FromDirection) //todo:  might not actually be euler :)
                     ),
-                    new MeshConnectorData(
-                        branchStartingPoint,
-                        branch.Radius,
-                        Quaternion.Euler(branch.FromDirection)
-                    )
+                    new MeshConnectorData(branchStartingPoint, branch.Radius, Quaternion.Euler(branch.FromDirection))
                 );
                 _meshDataBuilder.Append(toChildAMesh);
             }
@@ -95,11 +86,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
                         branch.ChildB.Radius,
                         Quaternion.Euler(branch.ChildB.FromDirection) //todo:  might not actually be euler :)
                     ),
-                    new MeshConnectorData(
-                        branchStartingPoint,
-                        branch.Radius,
-                        Quaternion.Euler(branch.FromDirection)
-                    )
+                    new MeshConnectorData(branchStartingPoint, branch.Radius, Quaternion.Euler(branch.FromDirection))
                 );
                 _meshDataBuilder.Append(toChildBMesh);
             }

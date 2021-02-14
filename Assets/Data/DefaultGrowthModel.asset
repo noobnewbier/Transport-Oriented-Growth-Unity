@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad30b1dc1a9c47149f2371b363929b3d, type: 3}
+  m_Script: {fileID: 11500000, guid: e77bb168e71eba04faa8f5649a6f4aa5, type: 3}
   m_Name: DefaultGrowthModel
   m_EditorClassIdentifier: 
-  nutritionRatio: 0.3
-  splitDecay: 0.01
-  directedness: 0.5
+  branchSpread: 0.45
   childDirectionAccuracyInDepth: 2
   childDirectionRatio: 0.6
-  branchSpread: 0.45
+  directedness: 0.5
   minLengthToSplit: 2.5
+  nutritionRatio: 0.3
+  splitDecay: 0.01

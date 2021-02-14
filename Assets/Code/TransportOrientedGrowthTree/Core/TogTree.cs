@@ -2,14 +2,14 @@
 
 namespace TransportOrientedGrowthTree.Core
 {
-    public class Tree : IDisposable
+    public class TogTree : IDisposable
     {
-        public Tree(GrowthModel growthModel)
+        public Branch Root { get; }
+
+        public TogTree(GrowthModel growthModel)
         {
             Root = new Branch(growthModel);
         }
-
-        public Branch Root { get; }
 
         public void Dispose()
         {

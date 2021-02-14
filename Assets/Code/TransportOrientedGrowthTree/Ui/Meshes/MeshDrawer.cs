@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace TransportOrientedGrowthTree.Ui.Meshes
 {
@@ -26,7 +27,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
         [Conditional("UNITY_EDITOR")]
         private void LogMeshData(MeshData meshData)
         {
-            UnityEngine.Debug.Log($"vertices count: {meshData.Vertices.Length}");
+            Debug.Log($"vertices count: {meshData.Vertices.Length}");
         }
     }
 }
