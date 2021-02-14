@@ -11,7 +11,7 @@ namespace TransportOrientedGrowthTree.Core
         private readonly int _depth;
         private readonly GrowthModel _growthModel;
         private readonly int _id;
-        private readonly Branch _parent;
+        private readonly Branch? _parent;
         private float _crossSectionArea = 0.1f;
 
         public bool IsLeaf { get; private set; }
@@ -19,9 +19,9 @@ namespace TransportOrientedGrowthTree.Core
         public Vector3 ToDirection { get; }
         public Vector3 FromDirection { get; }
 
-        [CanBeNull] public Branch ChildA { get; private set; }
+        [CanBeNull] public Branch? ChildA { get; private set; }
 
-        [CanBeNull] public Branch ChildB { get; private set; }
+        [CanBeNull] public Branch? ChildB { get; private set; }
 
         public float Length { get; private set; }
 
@@ -38,10 +38,10 @@ namespace TransportOrientedGrowthTree.Core
             IsLeaf = true;
         }
 
-        public Branch(Branch parent,
-                      int id,
-                      Vector3 toDirection,
-                      Vector3 fromDirection)
+        private Branch(Branch parent,
+                       int id,
+                       Vector3 toDirection,
+                       Vector3 fromDirection)
         {
             _growthModel = parent._growthModel;
             _depth = parent._depth + 1;
@@ -128,8 +128,12 @@ namespace TransportOrientedGrowthTree.Core
 
         private (Vector3 aDirection, Vector3 bDirection) GetDirectionsForChildren()
         {
-            var directionWithHighestLeafDensity = GetDirectionWithHighestLeafDensity(_growthModel.ChildDirectionAccuracyInDepth);
-            var normalToSelfDirectionAndHighestLeafDensityPlane = Vector3.Cross(ToDirection, directionWithHighestLeafDensity);
+            var direction = _depth == 0 ?
+                GetNoiseVector() :
+                GetDirectionWithHighestLeafDensity(_growthModel.ChildDirectionAccuracyInDepth) +
+                (1.0f - _growthModel.Directedness) * GetNoiseVector();
+
+            var normalToSelfDirectionAndHighestLeafDensityPlane = Vector3.Cross(ToDirection, direction);
             var randomDirectionFlip = Random.value > 0.5 ? 1f : -1f;
 
             var aDirection = Vector3.LerpUnclamped(
@@ -157,19 +161,17 @@ namespace TransportOrientedGrowthTree.Core
 
             var ancestorNode = this;
             var relativePositionToStartNode = Vector3.zero;
-            while (ancestorNode._depth > 0 && searchDepth-- >= 0)
+            while (ancestorNode != null && ancestorNode._depth > 0 && searchDepth-- >= 0)
             {
                 relativePositionToStartNode += ancestorNode.Length * ancestorNode.ToDirection;
                 ancestorNode = ancestorNode._parent;
             }
 
-            //Average relative to ancestor, shifted by rel ( + Noise )
-            //todo: noise should be added after this function, the function should return the exact value, maybe same as directedness
-            return _growthModel.Directedness * (GetAverageLeafPositionOfChildren(ancestorNode) - relativePositionToStartNode).normalized +
-                   (1.0f - _growthModel.Directedness) * noiseVector;
+            //Average relative to ancestor, shifted by relative position
+            return _growthModel.Directedness * (GetAverageLeafPositionOfChildren(ancestorNode) - relativePositionToStartNode).normalized;
         }
 
-        private Vector3 GetAverageLeafPositionOfChildren([CanBeNull] Branch branch)
+        private Vector3 GetAverageLeafPositionOfChildren(Branch? branch)
         {
             if (branch == null) return Vector3.zero;
 
