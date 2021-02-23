@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,9 +18,9 @@ namespace TransportOrientedGrowthTree.Core
         public Vector3 ToDirection { get; }
         public Vector3 FromDirection { get; }
 
-        [CanBeNull] public Branch? ChildA { get; private set; }
+        public Branch? ChildA { get; private set; }
 
-        [CanBeNull] public Branch? ChildB { get; private set; }
+        public Branch? ChildB { get; private set; }
 
         public float Length { get; private set; }
 

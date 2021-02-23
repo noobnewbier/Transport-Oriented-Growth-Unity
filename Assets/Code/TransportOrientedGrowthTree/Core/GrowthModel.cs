@@ -1,5 +1,6 @@
 ﻿namespace TransportOrientedGrowthTree.Core
 {
+
     public class GrowthModel
     {
         public float NutritionRatio { get; }
