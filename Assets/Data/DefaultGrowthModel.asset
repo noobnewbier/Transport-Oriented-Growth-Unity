@@ -19,3 +19,6 @@ MonoBehaviour:
   minLengthToSplit: 2.5
   nutritionRatio: 0.3
   splitDecay: 0.01
+  minDepthForLeafToAppear: 3
+  leafSpread: {x: 0.5, y: 0.5, z: 0.5}
+  leafCount: 5

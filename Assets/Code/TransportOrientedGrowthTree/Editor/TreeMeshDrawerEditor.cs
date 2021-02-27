@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Code.TransportOrientedGrowthTree.Editor
 {
-    [CustomEditor(typeof(TreeMeshDrawer))]
+    [CustomEditor(typeof(TogTreeDrawer))]
     [CanEditMultipleObjects]
     public class TreeMeshDrawerEditor : UnityEditor.Editor
     {
@@ -25,34 +25,34 @@ namespace Code.TransportOrientedGrowthTree.Editor
 
         private void DrawGrowButton()
         {
-            if (GUILayout.Button(nameof(TreeMeshDrawer.GrowTree)))
+            if (GUILayout.Button(nameof(TogTreeDrawer.GrowTree)))
                 foreach (var t in targets)
-                    ((TreeMeshDrawer) t).GrowTree();
+                    ((TogTreeDrawer) t).GrowTree();
         }
 
         private void DrawDrawButton()
         {
-            if (GUILayout.Button(nameof(TreeMeshDrawer.Draw)))
+            if (GUILayout.Button(nameof(TogTreeDrawer.Draw)))
                 foreach (var t in targets)
-                    ((TreeMeshDrawer) t).Draw();
+                    ((TogTreeDrawer) t).Draw();
         }
 
         private void DrawGrowAndDrawButton()
         {
-            if (GUILayout.Button($"{nameof(TreeMeshDrawer.GrowTree)} and {nameof(TreeMeshDrawer.Draw)}"))
+            if (GUILayout.Button($"{nameof(TogTreeDrawer.GrowTree)} and {nameof(TogTreeDrawer.Draw)}"))
                 foreach (var t in targets)
                 {
-                    ((TreeMeshDrawer) t).GrowTree();
-                    ((TreeMeshDrawer) t).Draw();
+                    ((TogTreeDrawer) t).GrowTree();
+                    ((TogTreeDrawer) t).Draw();
                 }
         }
         
         private void DrawSimplifyDrawButton()
         {
-            if (GUILayout.Button($"{nameof(TreeMeshDrawer.SimplifyMesh)}"))
+            if (GUILayout.Button($"{nameof(TogTreeDrawer.SimplifyMesh)}"))
                 foreach (var t in targets)
                 {
-                    ((TreeMeshDrawer) t).SimplifyMesh(_cellsCount, _targetTrianglesCount);
+                    ((TogTreeDrawer) t).SimplifyMesh(_cellsCount, _targetTrianglesCount);
                 }
 
             _targetTrianglesCount = EditorGUILayout.IntField("target vertices", _targetTrianglesCount);

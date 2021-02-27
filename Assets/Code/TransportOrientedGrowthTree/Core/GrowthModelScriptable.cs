@@ -16,7 +16,7 @@ namespace TransportOrientedGrowthTree.Core
         [SerializeField] private float splitDecay = 1E-2f;
         [SerializeField] private int minDepthForLeafToAppear;
         [SerializeField] private Vector3 leafSpread;
-        [SerializeField] private int minLeafCount;
+        [SerializeField] private int leafCount;
         
         
         
@@ -32,7 +32,7 @@ namespace TransportOrientedGrowthTree.Core
                 minLengthToSplit,
                 minDepthForLeafToAppear,
                 leafSpread,
-                minLeafCount
+                leafCount
             );
     }
 }

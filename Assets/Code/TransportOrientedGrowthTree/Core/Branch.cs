@@ -185,17 +185,17 @@ namespace TransportOrientedGrowthTree.Core
             if (!IsLeaf) yield break;
             if (_depth < _growthModel.MinDepthForLeafToAppear) yield break;
 
+            //guaranteeing the leaf will be in the same position with the same seed per branch
+            Random.InitState(_id);
             for (var i = 0; i < _growthModel.LeafCount; i++)
             {
-                //Hashed Random Displace
-                var random = new System.Random(_id);
                 var offset = new Vector3(
-                    random.Next(-1, 1) * _growthModel.LeafSpread.x,
-                    random.Next(-1, 1) * _growthModel.LeafSpread.y,
-                    random.Next(-1, 1) * _growthModel.LeafSpread.z
+                    Random.Range(-1f, 1f) * _growthModel.LeafSpread.x,
+                    Random.Range(-1f, 1f) * _growthModel.LeafSpread.y,
+                    Random.Range(-1f, 1f) * _growthModel.LeafSpread.z
                 );
 
-                yield return offset + Length * (ToDirection - FromDirection);
+                yield return offset + Length * ToDirection;
             }
         }
 

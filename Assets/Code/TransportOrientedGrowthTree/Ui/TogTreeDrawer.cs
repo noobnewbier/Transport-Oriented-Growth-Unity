@@ -1,4 +1,6 @@
-﻿using TransportOrientedGrowthTree.Core;
+﻿using System;
+using System.Linq;
+using TransportOrientedGrowthTree.Core;
 using TransportOrientedGrowthTree.Di;
 using TransportOrientedGrowthTree.Ui.Meshes;
 using UnityEngine;
@@ -6,9 +8,11 @@ using UnityEngine.Serialization;
 
 namespace TransportOrientedGrowthTree.Ui
 {
-    public class TreeMeshDrawer : MonoBehaviour, IInjectable
+    public class TogTreeDrawer : MonoBehaviour, IInjectable
     {
-        [SerializeField] private MeshDrawer? meshDrawer;
+        [SerializeField] private MeshDrawer meshDrawer = null!;
+        [SerializeField] private new ParticleSystem particleSystem = null!;
+        
 
         [FormerlySerializedAs("treeMonoBehaviour")] [SerializeField]
         private TogTreeMonoBehaviour? togTreeMonoBehaviour;
@@ -36,8 +40,27 @@ namespace TransportOrientedGrowthTree.Ui
         {
             if (togTreeMonoBehaviour != null && meshDrawer != null)
             {
-                _currentMeshData = _treeMeshDataDirector.CreateTreeMeshFromData(togTreeMonoBehaviour.TogTree);
+                var togTree = togTreeMonoBehaviour.TogTree;
+                
+                _currentMeshData = _treeMeshDataDirector.CreateTreeMeshFromData(togTree);
                 meshDrawer.DrawMesh(_currentMeshData);
+
+                var leafPositions = togTree.GetLeafPositions();
+
+                //ignore the allocation problem - it is not needed now
+                var particles = leafPositions.Select(p => new ParticleSystem.Particle
+                    {
+                        position = p,
+                        remainingLifetime = float.MaxValue,
+                        startSize = 0.25f,
+                        startColor = Color.green
+                    }
+                ).ToArray();
+                
+                Debug.Log($"Particles Count: {particles.Length}");
+                particleSystem.SetParticles(particles);
+
+
             }
         }
 
