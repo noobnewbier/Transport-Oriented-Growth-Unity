@@ -29,6 +29,13 @@ namespace TransportOrientedGrowthTree.Di.Composers
         {
             AddPrimitivesMeshDataDirector(dependenciesProvider);
             AddTreeMeshDirector(dependenciesProvider);
+            AddMeshDataSimplifier(dependenciesProvider);
+        }
+
+        private static void AddMeshDataSimplifier(IDependenciesProvider dependenciesProvider)
+        {
+            var meshSimplifyingService = new MeshDataSimplifyingService();
+            dependenciesProvider.AddTSingleton<IMeshDataSimplifyingService>(meshSimplifyingService);
         }
 
         private static void AddTreeMeshDirector(IDependenciesProvider dependenciesProvider)
