@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DefaultGrowthModel
   m_EditorClassIdentifier: 
   branchSpread: 0.45
-  childDirectionAccuracyInDepth: 2
+  childDirectionAccuracyInDepth: 10
   childDirectionRatio: 0.6
   directedness: 0.5
   minLengthToSplit: 2.5

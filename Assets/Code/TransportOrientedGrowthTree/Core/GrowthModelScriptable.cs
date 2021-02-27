@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityUtils.Constants;
 
 namespace TransportOrientedGrowthTree.Core
@@ -13,6 +14,12 @@ namespace TransportOrientedGrowthTree.Core
         [SerializeField] private float minLengthToSplit = 2.5f;
         [SerializeField] private float nutritionRatio = 0.3f;
         [SerializeField] private float splitDecay = 1E-2f;
+        [SerializeField] private int minDepthForLeafToAppear;
+        [SerializeField] private Vector3 leafSpread;
+        [SerializeField] private int minLeafCount;
+        
+        
+        
 
         public GrowthModel ToModel() =>
             new GrowthModel(
@@ -22,7 +29,10 @@ namespace TransportOrientedGrowthTree.Core
                 childDirectionAccuracyInDepth,
                 childDirectionRatio,
                 branchSpread,
-                minLengthToSplit
+                minLengthToSplit,
+                minDepthForLeafToAppear,
+                leafSpread,
+                minLeafCount
             );
     }
 }

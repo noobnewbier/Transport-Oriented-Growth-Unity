@@ -1,4 +1,6 @@
-﻿namespace TransportOrientedGrowthTree.Core
+﻿using UnityEngine;
+
+namespace TransportOrientedGrowthTree.Core
 {
 
     public class GrowthModel
@@ -10,6 +12,9 @@
         public float ChildDirectionRatio { get; }
         public float BranchSpread { get; }
         public float MinLengthToSplit { get; }
+        public int MinDepthForLeafToAppear { get; }
+        public Vector3 LeafSpread { get; }
+        public int LeafCount { get; }
 
         public GrowthModel(float nutritionRatio,
                            float splitDecay,
@@ -17,7 +22,10 @@
                            int childDirectionAccuracyInDepth,
                            float childDirectionRatio,
                            float branchSpread,
-                           float minLengthToSplit)
+                           float minLengthToSplit,
+                           int minDepthForLeafToAppear,
+                           Vector3 leafSpread,
+                           int leafCount)
         {
             NutritionRatio = nutritionRatio;
             SplitDecay = splitDecay;
@@ -26,6 +34,9 @@
             ChildDirectionRatio = childDirectionRatio;
             BranchSpread = branchSpread;
             MinLengthToSplit = minLengthToSplit;
+            MinDepthForLeafToAppear = minDepthForLeafToAppear;
+            LeafSpread = leafSpread;
+            LeafCount = leafCount;
         }
     }
 }

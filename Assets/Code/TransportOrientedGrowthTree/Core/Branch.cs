@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace TransportOrientedGrowthTree.Core
 {
-    //todo: might need to double 
     public class Branch : IDisposable
     {
         private readonly int _depth;
@@ -14,7 +14,6 @@ namespace TransportOrientedGrowthTree.Core
         private float _crossSectionArea = 0.1f;
 
         public bool IsLeaf { get; private set; }
-
         public Vector3 ToDirection { get; }
         public Vector3 FromDirection { get; }
 
@@ -179,6 +178,25 @@ namespace TransportOrientedGrowthTree.Core
             var childBAverageLeafPosition = (1.0f - _growthModel.ChildDirectionRatio) * GetAverageLeafPositionOfChildren(branch.ChildB);
 
             return selfAverageLeafPosition + childAAverageLeafPosition + childBAverageLeafPosition;
+        }
+
+        public IEnumerable<Vector3> GetLocalLeafPositions()
+        {
+            if (!IsLeaf) yield break;
+            if (_depth < _growthModel.MinDepthForLeafToAppear) yield break;
+
+            for (var i = 0; i < _growthModel.LeafCount; i++)
+            {
+                //Hashed Random Displace
+                var random = new System.Random(_id);
+                var offset = new Vector3(
+                    random.Next(-1, 1) * _growthModel.LeafSpread.x,
+                    random.Next(-1, 1) * _growthModel.LeafSpread.y,
+                    random.Next(-1, 1) * _growthModel.LeafSpread.z
+                );
+
+                yield return offset + Length * (ToDirection - FromDirection);
+            }
         }
 
         //todo: looks suspicious
