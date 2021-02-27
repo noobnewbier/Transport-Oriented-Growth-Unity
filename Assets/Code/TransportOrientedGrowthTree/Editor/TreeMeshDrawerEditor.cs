@@ -10,6 +10,9 @@ namespace Code.TransportOrientedGrowthTree.Editor
     [CanEditMultipleObjects]
     public class TreeMeshDrawerEditor : UnityEditor.Editor
     {
+        private static int _targetTrianglesCount;
+        private static int _cellsCount;
+
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -17,6 +20,7 @@ namespace Code.TransportOrientedGrowthTree.Editor
             DrawGrowButton();
             DrawDrawButton();
             DrawGrowAndDrawButton();
+            DrawSimplifyDrawButton();
         }
 
         private void DrawGrowButton()
@@ -41,6 +45,18 @@ namespace Code.TransportOrientedGrowthTree.Editor
                     ((TreeMeshDrawer) t).GrowTree();
                     ((TreeMeshDrawer) t).Draw();
                 }
+        }
+        
+        private void DrawSimplifyDrawButton()
+        {
+            if (GUILayout.Button($"{nameof(TreeMeshDrawer.SimplifyMesh)}"))
+                foreach (var t in targets)
+                {
+                    ((TreeMeshDrawer) t).SimplifyMesh(_cellsCount, _targetTrianglesCount);
+                }
+
+            _targetTrianglesCount = EditorGUILayout.IntField("target vertices", _targetTrianglesCount);
+            _cellsCount = EditorGUILayout.IntField("Cells Num", _cellsCount);
         }
     }
 }

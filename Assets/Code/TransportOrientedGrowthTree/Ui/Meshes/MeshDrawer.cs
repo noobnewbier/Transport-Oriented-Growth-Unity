@@ -6,11 +6,13 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
 {
     public class MeshDrawer : MonoBehaviour
     {
-        [SerializeField] private MeshFilter meshFilter;
+        [SerializeField] private MeshFilter? meshFilter;
 
         public void DrawMesh(MeshData meshData)
         {
             LogMeshData(meshData);
+            if (meshFilter == null) return;
+
 
             var mesh = meshFilter.mesh;
 

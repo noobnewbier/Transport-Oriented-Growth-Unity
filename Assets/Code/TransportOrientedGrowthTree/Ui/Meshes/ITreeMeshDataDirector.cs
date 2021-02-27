@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using TransportOrientedGrowthTree.Core;
+﻿using TransportOrientedGrowthTree.Core;
 using UnityEngine;
 
 namespace TransportOrientedGrowthTree.Ui.Meshes
@@ -29,7 +28,7 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             return _meshDataBuilder.Build();
         }
 
-        private void AppendMeshFromBranch([CanBeNull] Branch branch, Vector3 branchStartingPoint)
+        private void AppendMeshFromBranch(Branch? branch, Vector3 branchStartingPoint)
         {
             if (branch == null) return;
 

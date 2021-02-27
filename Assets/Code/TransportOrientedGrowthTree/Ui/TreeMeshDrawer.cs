@@ -8,27 +8,46 @@ namespace TransportOrientedGrowthTree.Ui
 {
     public class TreeMeshDrawer : MonoBehaviour, IInjectable
     {
-        [SerializeField] private MeshDrawer meshDrawer;
+        [SerializeField] private MeshDrawer? meshDrawer;
 
         [FormerlySerializedAs("treeMonoBehaviour")] [SerializeField]
-        private TogTreeMonoBehaviour togTreeMonoBehaviour;
+        private TogTreeMonoBehaviour? togTreeMonoBehaviour;
 
-        private ITreeMeshDataDirector _treeMeshDataDirector;
+        private ITreeMeshDataDirector _treeMeshDataDirector = null!;
+        private IMeshDataSimplifyingService _meshDataSimplifyingService = null!;
+        private MeshData? _currentMeshData;
 
         [Inject]
-        public void Inject(ITreeMeshDataDirector treeMeshDataDirector)
+        public void Inject(ITreeMeshDataDirector treeMeshDataDirector, IMeshDataSimplifyingService meshDataSimplifyingService)
         {
             _treeMeshDataDirector = treeMeshDataDirector;
+            _meshDataSimplifyingService = meshDataSimplifyingService;
         }
 
         public void GrowTree()
         {
-            togTreeMonoBehaviour.Grow();
+            if (togTreeMonoBehaviour != null)
+            {
+                togTreeMonoBehaviour.Grow();
+            }
         }
 
         public void Draw()
         {
-            meshDrawer.DrawMesh(_treeMeshDataDirector.CreateTreeMeshFromData(togTreeMonoBehaviour.TogTree));
+            if (togTreeMonoBehaviour != null && meshDrawer != null)
+            {
+                _currentMeshData = _treeMeshDataDirector.CreateTreeMeshFromData(togTreeMonoBehaviour.TogTree);
+                meshDrawer.DrawMesh(_currentMeshData);
+            }
+        }
+
+        public void SimplifyMesh(int cellsCount, int trianglesCount)
+        {
+            if (_currentMeshData != null && meshDrawer != null)
+            {
+                var simplifiedMeshData = _meshDataSimplifyingService.Simplify(_currentMeshData, cellsCount, trianglesCount);
+                meshDrawer.DrawMesh(simplifiedMeshData);
+            }
         }
     }
 }

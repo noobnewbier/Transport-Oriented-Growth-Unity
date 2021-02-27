@@ -61,11 +61,6 @@ namespace TransportOrientedGrowthTree.Ui.Meshes
             );
         }
 
-        public MeshData CreateTriangle(Vector3 a, Vector3 b, Vector3 c)
-        {
-            return new MeshData(new[] {a, b, c}, new[] {0, 1, 2});
-        }
-
         private void AppendHexTube(MeshConnectorData top, MeshConnectorData bottom)
         {
             var topCenter = top.Center;
