@@ -321,7 +321,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   growthModelScriptable: {fileID: 11400000, guid: 7e01b8048e81f3f4abf2bec0738f772f,
     type: 2}
-  growthRate: 4
+  growthRate: 2
 --- !u!4 &542037918
 Transform:
   m_ObjectHideFlags: 0
