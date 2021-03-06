@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e77bb168e71eba04faa8f5649a6f4aa5, type: 3}
   m_Name: DefaultGrowthModel
   m_EditorClassIdentifier: 
-  branchSpread: 0.45
+  branchSpread: 0.96
   childDirectionAccuracyInDepth: 10
   childDirectionRatio: 0.6
-  directedness: 0.5
-  minLengthToSplit: 2.5
+  inversedDirectedness: 0.76
+  minLengthToSplit: 3.5
   nutritionRatio: 0.3
   splitDecay: 0.01
-  minDepthForLeafToAppear: 3
-  leafSpread: {x: 0.5, y: 0.5, z: 0.5}
+  minDepthForLeafToAppear: 5
+  leafSpread: {x: 1, y: 1, z: 1}
   leafCount: 5

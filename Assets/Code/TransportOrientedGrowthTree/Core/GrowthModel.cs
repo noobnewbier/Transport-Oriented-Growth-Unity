@@ -7,7 +7,7 @@ namespace TransportOrientedGrowthTree.Core
     {
         public float NutritionRatio { get; }
         public float SplitDecay { get; }
-        public float Directedness { get; }
+        public float InversedDirectedness { get; }
         public int ChildDirectionAccuracyInDepth { get; }
         public float ChildDirectionRatio { get; }
         public float BranchSpread { get; }
@@ -18,7 +18,7 @@ namespace TransportOrientedGrowthTree.Core
 
         public GrowthModel(float nutritionRatio,
                            float splitDecay,
-                           float directedness,
+                           float inversedDirectedness,
                            int childDirectionAccuracyInDepth,
                            float childDirectionRatio,
                            float branchSpread,
@@ -29,7 +29,7 @@ namespace TransportOrientedGrowthTree.Core
         {
             NutritionRatio = nutritionRatio;
             SplitDecay = splitDecay;
-            Directedness = directedness;
+            InversedDirectedness = inversedDirectedness;
             ChildDirectionAccuracyInDepth = childDirectionAccuracyInDepth;
             ChildDirectionRatio = childDirectionRatio;
             BranchSpread = branchSpread;

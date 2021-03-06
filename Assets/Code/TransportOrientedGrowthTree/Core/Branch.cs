@@ -129,7 +129,7 @@ namespace TransportOrientedGrowthTree.Core
             var direction = _depth == 0 ?
                 GetNoiseVector() :
                 GetDirectionWithHighestLeafDensity(_growthModel.ChildDirectionAccuracyInDepth) +
-                (1.0f - _growthModel.Directedness) * GetNoiseVector();
+                (1.0f - _growthModel.InversedDirectedness) * GetNoiseVector();
 
             var normalToSelfDirectionAndHighestLeafDensityPlane = Vector3.Cross(ToDirection, direction);
             var randomDirectionFlip = Random.value > 0.5 ? 1f : -1f;
@@ -166,7 +166,7 @@ namespace TransportOrientedGrowthTree.Core
             }
 
             //Average relative to ancestor, shifted by relative position
-            return _growthModel.Directedness * (GetAverageLeafPositionOfChildren(ancestorNode) - relativePositionToStartNode).normalized;
+            return _growthModel.InversedDirectedness * (GetAverageLeafPositionOfChildren(ancestorNode) - relativePositionToStartNode).normalized;
         }
 
         private Vector3 GetAverageLeafPositionOfChildren(Branch? branch)
