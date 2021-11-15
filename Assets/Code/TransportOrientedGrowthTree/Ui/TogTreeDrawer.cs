@@ -52,7 +52,7 @@ namespace TransportOrientedGrowthTree.Ui
                     {
                         position = p,
                         remainingLifetime = float.MaxValue,
-                        startSize = 0.25f,
+                        startSize = particleSystem.main.startSize.constantMax,
                         startColor = Color.green
                     }
                 ).ToArray();
